@@ -1,0 +1,21 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Sensors</h1>
+
+<% if @sensors.count > 0 %>
+<div id="sensors">
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Identifier</th>
+      <th>Service endpoint</th>
+      <th><em>Action</em></th>
+    </tr>
+    <% @sensors.each do |sensor| %>
+      <%= render sensor, list: true %>
+    <% end %>
+  </table>
+</div>
+<% end %>
+
+<%= link_to "New sensor", new_sensor_path %>

@@ -1,0 +1,32 @@
+<%= form_with(model: sensor) do |form| %>
+  <% if sensor.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(sensor.errors.count, "error") %> prohibited this sensor from being saved:</h2>
+
+      <ul>
+        <% sensor.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :identifier, style: "display: block" %>
+    <%= form.text_field :identifier, value: sensor.identifier || ((Sensor.last.id + 1) rescue 1) %> (max. 4 chars)
+  </div>
+
+  <div>
+    <%= form.label :service_endpoint, style: "display: block" %>
+    <%= form.text_field :service_endpoint %> (max. 15 chars)
+  </div>
+
+  <div>
+    <%= form.label :add_info, style: "display: block" %>
+    <%= form.text_area :add_info %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

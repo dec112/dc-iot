@@ -1,0 +1,24 @@
+meta:
+  name: IoT_Monitoring
+
+content:
+  bases: 
+    - name: IoT_Monitoring
+      attributes:
+        title: String
+        base: String
+        attribute: String
+        operator: String
+        value: String
+        trigger: String
+
+  overlays: 
+    - type: OverlayValidation
+      base: IoT_Monitoring
+      name: IoT_MonitoringValidationOverlay
+      attributes:
+        operator: 
+          valueOption:
+            - ">="
+            - "=="
+            - "<="

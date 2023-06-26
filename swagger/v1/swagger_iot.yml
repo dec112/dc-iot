@@ -1,0 +1,24 @@
+openapi: 3.0.1
+info:
+  title: DEC112 IoT Container API
+  description: >-
+    This light-weight container stores and process IoT sensor input.
+  contact:
+    email: office@ownyourdata.eu
+  license:
+    name: MIT License
+    url: 'https://opensource.org/licenses/MIT'
+  version: v1
+servers:
+  - url: /
+paths:
+  /sensors:
+    get:
+      summary: show list of configured sensors
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+        '500':
+          description: Server error

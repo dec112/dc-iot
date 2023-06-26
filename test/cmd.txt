@@ -1,0 +1,27 @@
+./build.sh --arm
+
+docker run -d --name iot -p 3600:3000 oydeu/dc-iot:arm64v8
+
+echo '{"data":{"content":[{"bn":"urn:dev:mac:d6ea13fffff5113b:", "bt":1678221120.0, "n":"batt", "u":"%EL", "v":66}, {"n":"label", "vs":"DEC112 PuckJS"}, {"n":"temp", "u":"Cel", "v":23}, {"n":"move", "vb":true}, {"n":"button", "vb":true}]}}' | curl -H "Content-Type: application/json" -d @- -X POST http://localhost:3600/api/data
+
+
+echo '{"data":{"content":{"hello": "DEC112"}}}' | curl -H "Content-Type: application/json" -d @- -X POST http://localhost:3600/api/data
+
+
+echo '[{"n":"identifier","v":5,"bn":"urn:dev:mac:fb518cffff5b9075","bt":"1.685286440e+09"},{"n":"batt","u":"%EL","v":60},{"n":"heading","v":183.53101568878},{"n":"temperature","v":33.05662536621},{"n":"pressure","u":"hPa","v":973.95376105848},{"n":"altitude","u":"m","v":332.42848559087},{"n":"steps","u":"counter","v":21},{"n":"manually_triggered","vb":true}]' | curl -H "Content-Type: application/json" -d @- -X POST http://localhost:3600/api/data
+
+echo '{"data":{"content":[{"bn":"urn:dev:mac:d6ea13fffff5113b:", "bt":1678221120.0, "n":"batt", "u":"%EL", "v":66}, {"n":"label", "vs":"DEC112 PuckJS"}, {"n":"temp", "u":"Cel", "v":23}, {"n":"move", "vb":true}, {"n":"button", "vb":true}]}}' | curl -H "Content-Type: application/json" -d @- -X POST https://dec4iot.data-container.net/api/data
+
+
+echo '{"data":{"content":[{"bn":"urn:dev:mac:d6ea13fffff5113b:", "bt":1678221120.0, "n":"batt", "u":"%EL", "v":66}, {"n":"label", "vs":"DEC112 PuckJS"}, {"n":"temp", "u":"Cel", "v":23}, {"n":"move", "vb":true}, {"n":"button", "vb":true}]}}' | curl -H "Content-Type: application/json" -d @- -X POST https://dec112.eu/iot
+
+
+# read IoT_Monitoring ---
+
+curl "http://localhost:3600/api/data?id=4&f=plain"
+
+echo '{"title":"Batterie Warnung","base":".*batt","attribute":"v","operator": "<=","value":"20","trigger":"email", "meta": {"schema":"IoT_Monitoring", "processed":true}}' | curl -H 'Content-Type: application/json' -d @- -X POST http://localhost:3600/api/data
+
+echo '{"title":"Rettungsnotruf","base":".*manually_triggered","attribute":"vb","operator": "==","value":"true","trigger":"dec112:144", "meta": {"schema":"IoT_Monitoring", "processed":true}}' | curl -H 'Content-Type: application/json' -d @- -X POST http://localhost:3600/api/data
+
+echo '{"title":"Feuerwehrnotruf","base":".*temperature","attribute":"v","operator": ">= (10min)","value":"40","trigger":"dec112:122", "meta": {"schema":"IoT_Monitoring", "processed":true}}' | curl -H 'Content-Type: application/json' -d @- -X POST http://localhost:3600/api/data

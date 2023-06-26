@@ -1,0 +1,1 @@
+Mime::Type.register 'application/json', :json, %w( text/plain text/x-json application/senml+json )
