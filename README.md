@@ -1,12 +1,9 @@
-# dc-iot
-Semantic Container for IoT integration
-
-
 # dc-IoT (SemCon)
 Semantic Container for IoT integration
 
 ## Resources
 * Project description: https://www.netidee.at/dec4iot    
+* Semantic Container: https://github.com/OwnYourData/semcon    
 
 &nbsp;    
 
@@ -26,7 +23,7 @@ If you want to contribute, please follow these steps:
 
 ## About  
 
-<img align="right" src="https://raw.githubusercontent.com/dec112/dc-iot/app/assets/images/netidee.jpg" height="150">This project has received funding [Netidee Call 17](https://netidee.at).
+<img align="right" src="https://raw.githubusercontent.com/dec112/dc-iot/main/app/assets/images/netidee.jpeg" height="150">This project has received funding [Netidee Call 17](https://netidee.at).
 
 <br clear="both" />
 
