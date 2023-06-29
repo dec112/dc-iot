@@ -23,7 +23,7 @@ If you want to contribute, please follow these steps:
 
 ## About  
 
-<img align="right" src="https://raw.githubusercontent.com/dec112/dc-iot/main/app/assets/images/netidee.jpeg" height="150">This project has received funding [Netidee Call 17](https://netidee.at).
+<img align="right" src="https://raw.githubusercontent.com/dec112/dc-iot/main/app/assets/images/netidee.jpeg" height="150">This project has received funding from [Netidee Call 17](https://netidee.at).
 
 <br clear="both" />
 
