@@ -1,0 +1,11 @@
+obj = JSON.parse(File.read("nnoe-2.txt"))
+msg = obj["messages"]
+msg.each do |m|
+  if m["texts"] != []
+    if m["origin"] == "remote"
+        puts "R: " + m["texts"].first.to_s
+    else
+        puts "L: " + m["texts"].first.to_s
+    end
+  end
+end; nil

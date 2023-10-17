@@ -28,7 +28,7 @@
       </p>
 
       <p>
-        <img src="<%= "data:image/png;base64," + Base64.strict_encode64(Barby::QrCode.new({"sensor-id": sensor.sensor_id, "serviceEndpoint": sensor.service_endpoint}.to_json, level: :q, size: 8).to_png({ xdim: 8 })).html_safe %>">
+        <img src="<%= "data:image/png;base64," + Base64.strict_encode64(Barby::QrCode.new({"sensor-id": sensor.identifier, "serviceEndpoint": sensor.service_endpoint}.to_json, level: :q, size: 8).to_png({ xdim: 8 })).html_safe %>">
       </p>
   <% end %>
 </div>

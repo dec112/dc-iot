@@ -11,6 +11,7 @@ content:
         operator: String
         value: String
         trigger: String
+        trigger-options: String
 
   overlays: 
     - type: OverlayValidation

@@ -1,4 +1,6 @@
 class SensorsController < ApplicationController
+  protect_from_forgery with: :null_session,
+      if: Proc.new { |c| c.request.format =~ %r{application/json} }
   before_action :set_sensor, only: %i[ show edit update destroy ]
 
   require 'barby'

@@ -1,0 +1,11 @@
+meta:
+  name: IoT_Event
+
+content:
+  bases: 
+    - name: IoT_Event
+      attributes:
+        trigger: String
+        record: String
+        monitor: String
+        ts: Integer

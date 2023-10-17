@@ -1,6 +1,39 @@
+cd ~/projects/dec4iot/impl/dc-iot
 ./build.sh --arm
 
-docker run -d --name iot -p 3600:3000 oydeu/dc-iot:arm64v8
+docker run -d --name iot -e SMTP_HOST="smtp.gmail.com" -e SMTP_PORT=587 -e SMTP_DOMAIN="gmail.com" -e SMTP_USER="oyd.email@gmail.com" -e SMTP_PASSWORD="rkfpkpyprtbjomyv" -e FROM_MAIL="OwnYourData Test <oyd.email@gmail.com>" -p 3600:3000 oydeu/dc-iot:arm64v8
+
+docker rm -f iot && docker run -d --name iot -e SMTP_HOST="smtp.gmail.com" -e SMTP_PORT=587 -e SMTP_DOMAIN="gmail.com" -e SMTP_USER="oyd.email@gmail.com" -e SMTP_PASSWORD="rkfpkpyprtbjomyv" -e FROM_MAIL="OwnYourData Test <oyd.email@gmail.com>" -p 3600:3000 oydeu/dc-iot:arm64v8 && docker logs -f iot
+
+# create monitoring record (trigger when battery <= 60)
+echo '{"title":"Batterie Warnung","base":"batt$","base_name":"batt","attribute":"v","operator": "<=","value":"60","trigger":"email", "trigger-options":{"title":"E-Mail zu niedrigem Batteriestand", "to":"christoph.fabianek@gmail.com", "subject":"Niedriger Batteriestand", "body":"{{n}} ist unter 20% (aktuell: {{v}})"}, "meta": {"schema":"IoT_Monitoring", "processed":true}}' | curl -H 'Content-Type: application/json' -d @- -X POST http://localhost:3600/api/data
+
+# create monitoring record (trigger when manually_triggered vb == true)
+echo '{"base":"manually_triggered$","base_name":"manually_triggered","title":"Notruftaste","value":"true","trigger":"dec112sdk","operator":"==","attribute":"vb","trigger-options":{"title":"DEC112 Notruf via SDK","target":"{{#if sensor.target}}{{sensor.target}}{{else}}ambulance{{/if}}","callId":"{{meta.dri}}","sensorId":"{{n}}","language":"de-at","category":"{{#if sensor.category}}{{sensor.category}}{{else}}health{{/if}}","event":"Notruftaste auf IoT Sensor","contact":"Demosetup OwnYourData, Tel: 0677 617 53 112","web":"https://www.ownyourdata.eu/de/impressum/","headline":"Notruf durch IoT Sensor","locations":[{"type":"Manual","civic":{"street":"Michael Scherz-Straße","houseNumber":"14","floor":"","postalCode":"2540","city":"Bad Vöslau"}}]}, "meta": {"schema":"IoT_Monitoring", "processed":true}}'  | curl -H 'Content-Type: application/json' -d @- -X POST http://localhost:3600/api/data
+
+# initial data
+echo '{"identifier":"5", "service_endpoint":"dec112.eu/iot", "add_info":"{\"target\":\"ambulance\"}"}' | curl -H 'Content-Type: application/json' -d @- -X POST http://localhost:3600/sensors
+
+echo '[{"n":"identifier","v":5,"bn":"urn:dev:mac:fb518cffff5b9075","bt":1685286440},{"n":"batt","u":"%EL","v":60},{"n":"heading","v":183.53101568878},{"n":"temperature","v":33.05662536621},{"n":"pressure","u":"hPa","v":973.95376105848},{"n":"altitude","u":"m","v":332.42848559087},{"n":"steps","u":"counter","v":21},{"n":"manually_triggered","vb":true}]' | curl -H "Content-Type: application/json" -d @- -X POST http://localhost:3600/api/data
+
+# check data was written
+curl "http://localhost:3600/api/data?id=4&f=plain"
+
+# check data was parsed
+curl "http://localhost:3600/api/data?id=8&f=plain"
+
+# data-container.net --------
+
+
+echo '{"title":"Batterie Warnung","base":"batt$","base_name":"batt","attribute":"v","operator": "<=","value":"60","trigger":"email", "trigger-options":{"title":"E-Mail zu niedrigem Batteriestand", "to":"christoph.fabianek@gmail.com", "subject":"Niedriger Batteriestand", "body":"{{n}} ist unter 20% (aktuell: {{v}})"}, "meta": {"schema":"IoT_Monitoring", "processed":true}}' | curl -H 'Content-Type: application/json' -d @- -X POST https://dec4iot.data-container.net/api/data
+
+echo '{"base":"manually_triggered$","base_name":"manually_triggered","title":"Notruftaste","value":"true","trigger":"dec112sdk","operator":"==","attribute":"vb","trigger-options":{"title":"DEC112 Notruf via SDK","target":"{{#if sensor.target}}{{sensor.target}}{{else}}ambulance{{/if}}","callId":"{{meta.dri}}","sensorId":"{{n}}","language":"de-at","category":"{{#if sensor.category}}{{sensor.category}}{{else}}health{{/if}}","event":"Notruftaste auf IoT Sensor","contact":"Demosetup OwnYourData, Tel: 0677 617 53 112","web":"https://www.ownyourdata.eu/de/impressum/","headline":"Notruf durch IoT Sensor","locations":[{"type":"Manual","civic":{"street":"Michael Scherz-Straße","houseNumber":"14","floor":"","postalCode":"2540","city":"Bad Vöslau"}}]}, "meta": {"schema":"IoT_Monitoring", "processed":true}}' | curl -H 'Content-Type: application/json' -d @- -X POST https://dec4iot.data-container.net/api/data
+
+
+echo '[{"n":"identifier","v":5,"bn":"urn:dev:mac:fb518cffff5b9075","bt":1685286440},{"n":"batt","u":"%EL","v":60},{"n":"heading","v":183.53101568878},{"n":"temperature","v":33.05662536621},{"n":"pressure","u":"hPa","v":973.95376105848},{"n":"altitude","u":"m","v":332.42848559087},{"n":"steps","u":"counter","v":21},{"n":"manually_triggered","vb":true}]' | curl -H "Content-Type: application/json" -d @- -X POST https://dec4iot.data-container.net/api/data
+
+
+# OLD =======================
 
 echo '{"data":{"content":[{"bn":"urn:dev:mac:d6ea13fffff5113b:", "bt":1678221120.0, "n":"batt", "u":"%EL", "v":66}, {"n":"label", "vs":"DEC112 PuckJS"}, {"n":"temp", "u":"Cel", "v":23}, {"n":"move", "vb":true}, {"n":"button", "vb":true}]}}' | curl -H "Content-Type: application/json" -d @- -X POST http://localhost:3600/api/data
 

@@ -1,0 +1,68 @@
+TLS 1: net.Server.on(connection): new TLSSocket
+TLS 1: server _init handle? true
+TLS 1: server initRead handle? true buffered? 0
+TLS 1: server onhandshakestart
+TLS 1: server onhandshakedone
+TLS 1: server _finishInit handle? true alpn http/1.1 servername app.test.dec112.eu
+TLS 1: server emit secureConnection
+2023-09-13T08:20:01.174Z info HTTP Transport: POST /api/v1/update/dec4iot-test
+2023-09-13T08:20:01.177Z info DEC4IoT Test: Adding to global list
+2023-09-13T08:20:01.179Z info DEC4IoT Test: Initializing client
+2023-09-13T08:20:01.180Z info DEC4IoT Test: Initializing agent
+2023-09-13T08:20:01.180Z debug Client DEC4IoT Test subscribing to agent default
+2023-09-13T08:20:01.213Z debug Agent default initializing...
+2023-09-13T08:20:01.297Z debug Agent default with 1 subscribers
+2023-09-13T08:20:01.298Z debug IncomingMapper CapMapper chosen
+2023-09-13T08:20:01.300Z debug DEC4IoT Test: Body: {"web":"https://www.ownyourdata.eu/de/impressum/","event":"Notruftaste auf IoT Sensor","title":"DEC112 Notruf via SDK","callId":"zQmWV7jYfjPxGvog5Z7k5X9p8kbrKSx5gxo4Dos6Kgie5P1","target":"ambulance","contact":"Demosetup OwnYourData, Tel: 0677 617 53 112","category":"health","headline":"Notruf durch IoT Sensor","language":"de-at","sensorId":"urn:dev:mac:fb518cffff5b9075manually_triggered","locations":[{"type":"Manual","civic":{"city":"Bad Vöslau","floor":"","street":"Michael Scherz-Straße","postalCode":"2540","houseNumber":"14"}}]}
+2023-09-13T08:20:01.331Z info DEC4IoT Test (zQmWV7jYfjPxGvog5Z7k5X9p8kbrKSx5gxo4Dos6Kgie5P1): New call. Total: 1
+2023-09-13T08:20:01.339Z info DEC4IoT Test (zQmWV7jYfjPxGvog5Z7k5X9p8kbrKSx5gxo4Dos6Kgie5P1): Starting {"target":"sip:144@app.test.dec112.eu","type":257,"text":"Emergency call from an automated IoT device."}
+2023-09-13T08:20:01.451Z info HTTP Transport: DEC4IoT Test: {"code":200,"message":"Started emergency call","state":"active","type":"dec4iot_cap","messageId":"1","callId":"zQmWV7jYfjPxGvog5Z7k5X9p8kbrKSx5gxo4Dos6Kgie5P1","ip":"::ffff:45.157.176.15"}
+2023-09-13T08:20:01.496Z info DEC4IoT Test (zQmWV7jYfjPxGvog5Z7k5X9p8kbrKSx5gxo4Dos6Kgie5P1): DEC112 Test-Echo: Hello, I am the DEC112 Echo-Call-Center!
+I will respond with an echo to all your messages.
+
+This emergency call is routed via the Austrian NG112/911 infrastructure.
+For further information, visit us on https://www.dec112.at/en.
+Our open source NG112/911 components can be found on https://github.com/dec112.
+
+Please note that this is not a real emergency call!
+
+
+
+
+
+
+
+
+
+TLS 1: net.Server.on(connection): new TLSSocket
+TLS 1: server _init handle? true
+TLS 1: server initRead handle? true buffered? 0
+TLS 1: server onhandshakestart
+TLS 1: server onerror [Error: 139643745520432:error:1417C0C7:SSL routines:tls_process_client_certificate:peer did not return a certificate:../deps/openssl/openssl/ssl/statem/statem_srvr.c:3725:
+] {
+  library: 'SSL routines',
+  function: 'tls_process_client_certificate',
+  reason: 'peer did not return a certificate',
+  code: 'ERR_SSL_PEER_DID_NOT_RETURN_A_CERTIFICATE'
+} had? false
+TLS 1: server emit tlsClientError: [Error: 139643745520432:error:1417C0C7:SSL routines:tls_process_client_certificate:peer did not return a certificate:../deps/openssl/openssl/ssl/statem/statem_srvr.c:3725:
+] {
+  library: 'SSL routines',
+  function: 'tls_process_client_certificate',
+  reason: 'peer did not return a certificate',
+  code: 'ERR_SSL_PEER_DID_NOT_RETURN_A_CERTIFICATE'
+}
+
+
+
+
+
+
+
+
+TLS 1: net.Server.on(connection): new TLSSocket
+TLS 1: server _init handle? true
+TLS 1: server initRead handle? true buffered? 0
+TLS 1: server onhandshakestart
+TLS 1: server onhandshakedone
+TLS 1: server _finishInit handle? true alpn false servername app.test.dec112.eu
