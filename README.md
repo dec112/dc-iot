@@ -1,4 +1,4 @@
-# dc-IoT (SemCon) Semantic Container for IoT integration
+# `dc-iot` - Semantic Container for IoT integration
 
 This repository provides a comprehensive solution for the monitoring of IoT devices. With this software, users can integrate sensors and monitor the status, performance, and any anomalies. The system continuously collects data from the connected devices and analyzes it to determine if they are functioning correctly or if potential problems might arise. Upon detecting unusual activities or when device parameters fall outside the established normal range, alarms are immediately triggered. These alerts can be relayed through various channels such as email, or alerting through the DEC112 ESInet. The repository includes both the code for data collection and analysis, as well as a user-friendly interface for configuring monitoring settings and alarm conditions. The aim of this project is to provide a robust and scalable solution to ensure the efficiency and security of IoT networks.
 
