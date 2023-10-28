@@ -34,22 +34,6 @@ class TriggersController < ApplicationController
 
         # monitoring trigger
         begin
-            # !!!fix-me
-            # if Rails.configuration.database_configuration[Rails.env]["adapter"] == "postgresql"
-            #     @unprocessed = Store.where.not("meta @> '{\"processed\": true}'")
-            # else
-            #     @unprocessed = Store.last(5)
-            # end
-
-            # @events = Store.where(schema: SOYA_EVENT)
-            # @events.each do |event|
-            #     if !iot_event(event.id)
-            #         success = false
-            #     end
-            #     if item.created_at < Time.now-2.minutes
-            #         # trigger alarm
-            #     end
-            # end unless @unprocessed.count == 0
 
         rescue => ex
             puts "Monitoring Error: " + ex.message

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dec4iot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dec4iot
+  template:
+    metadata:
+      name: dec4iot
+      labels:
+        app: dec4iot
+    spec:
+      containers:
+      - name: dec4iot
+        image: oydeu/dc-iot:latest
+        ports:
+        - containerPort: 3000
+        env:
+          - name: LANG
+            value: en_US.UTF-8
+          - name: RAILS_LOG_TO_STDOUT
+            value: "TRUE"
+          - name: RAILS_SERVE_STATIC_FILES
+            value: "TRUE"
+          - name: RAILS_ENV
+            value: production
+          - name: SMTP_HOST
+            value: "xxx"
+          - name: SMTP_DOMAIN
+            value: "xxx"
+          - name: SMTP_USER
+            value: "xxx"
+          - name: SMTP_PASSWORD
+            value: "xxx"
+          - name: FROM_MAIL
+            value: "xxx"
+          - name: DC_DB
+            value: kubernetes
+          - name: DB_HOST
+            value: xxx
+          - name: DB_NAME
+            value: xxx
+          - name: DB_USER
+            value: xxx
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: iot-secrets
+                key: db-passwd
+          - name: RAILS_CONFIG_HOSTS
+            value: "xxx.example.com"
+          - name: DEFAULT_DID_OAUTH_APP
+            value: oydid
+          - name: FULLCHAIN
+            valueFrom:
+              configMapKeyRef:
+                name: fullchain-config
+                key: fullchain.pem
+          - name: PRIVKEY
+            valueFrom:
+              configMapKeyRef:
+                name: privkey-config
+                key: privkey.pem
