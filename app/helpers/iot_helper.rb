@@ -79,6 +79,28 @@ module IotHelper
             if !@rec.save
                 success = false
             end
+        else
+            rec_meta = @rec.meta
+            if rec_meta.nil?
+                if HAS_JSONB
+                    @rec.meta = {"processed": true, "error": true}
+                else
+                    @rec.meta = {"processed": true, "error": true}.to_json
+                end
+            else
+                if rec_meta.is_a?(String)
+                    rec_meta = JSON.parse(rec_meta)
+                end
+                if HAS_JSONB
+                    @rec.meta = rec_meta.merge({"processed": true, "error": true})
+                else
+                    @rec.meta = rec_meta.merge({"processed": true, "error": true}).transform_keys(&:to_s).to_json
+                end
+            end
+            if !@rec.save
+                success = false
+            end
+
         end
 puts "completed transformation of ID: " + id.to_s + " (" + success.to_s + ")"
         return success
@@ -150,9 +172,22 @@ puts "completed transformation of ID: " + id.to_s + " (" + success.to_s + ")"
                         sensor_id = nil
                     else
                         sensor_id = Store.where("item->>'n'= ?", identifier).last.item["v"] rescue nil
+                        if sensor_id.nil?
+                            sensor_id = Store.where("item->>'n'= ?", identifier).last.item["vs"] rescue nil
+                        end
                     end
                     if sensor_id.nil?
-                        sensor = {}
+                        identifier = rec["n"].sub(item["base_name"],"id") rescue nil
+                        if identifier.nil?
+                            sensor = {}
+                        else
+                            sensor_id = Store.where("item->>'n'= ?", identifier).last.item["vs"] rescue nil
+                            if sensor_id.nil?
+                                sensor = {}
+                            else
+                                sensor = JSON.parse(Sensor.find_by_identifier(sensor_id.to_s).add_info) rescue {}
+                            end
+                        end
                     else
                         sensor = JSON.parse(Sensor.find_by_identifier(sensor_id.to_s).add_info) rescue {}
                     end
@@ -211,6 +246,27 @@ puts "completed transformation of ID: " + id.to_s + " (" + success.to_s + ")"
             if !@store.save
                 success = false
             end
+        else
+            rec_meta = @store.meta
+            if rec_meta.nil?
+                if HAS_JSONB
+                    @store.meta = {"processed": true, "error": true}
+                else
+                    @store.meta = {"processed": true, "error": true}.to_json
+                end
+            else
+                if rec_meta.is_a?(String)
+                    rec_meta = JSON.parse(rec_meta)
+                end
+                if HAS_JSONB
+                    @store.meta = rec_meta.merge({"processed": true, "error": true})
+                else
+                    @store.meta = rec_meta.merge({"processed": true, "error": true}).transform_keys(&:to_s).to_json
+                end
+            end
+            if !@store.save
+                success = false
+            end
         end
 puts "completed monitoring of ID: " + id.to_s + " (" + success.to_s + ")"
         return success
@@ -237,7 +293,6 @@ puts "completed monitoring of ID: " + id.to_s + " (" + success.to_s + ")"
                 rec["meta"]=rec["meta"].merge(@store.meta).transform_keys(&:to_s) rescue rec["meta"]
             end
         end
-
 
         begin
             handlebars = Handlebars::Engine.new
@@ -287,6 +342,7 @@ puts "completed monitoring of ID: " + id.to_s + " (" + success.to_s + ")"
                 notify_object = traverse_json(rec["monitor"]["trigger-options"], notify_object, rec)
                 notify_object = add_location(notify_object, rec) rescue notify_object
                 notify_object = JSON.parse(notify_object.to_json.gsub("'", "\"")) rescue nil
+                psap_url = rec["monitor"]["trigger-options"]["psap-url"] rescue nil
                 if notify_object.nil?
                     success =false
                 else
@@ -294,8 +350,9 @@ puts "completed monitoring of ID: " + id.to_s + " (" + success.to_s + ")"
 #  curl --cert fullchain.pem --key privkey.pem \
 #       -H "Content-Type: application/json" -d @- \
 #       -X POST https://app.test.dec112.eu:8081/api/v1/update/dec4iot-test
-
-                    psap_url = ENV['PSAP_URL'] || "https://app.test.dec112.eu:8081/api/v1/update/dec4iot-test"
+                    if psap_url.to_s == ""
+                        psap_url = ENV['PSAP_URL'] || "https://app.test.dec112.eu:8081/api/v1/update/dec4iot-test"
+                    end
                     cmd  = 'TEMP_CERT_FILE=$(mktemp) && echo "' + ENV['FULLCHAIN'].to_s + '" > "$TEMP_CERT_FILE" && '
                     cmd += 'TEMP_KEY_FILE=$(mktemp) && echo "' + ENV['PRIVKEY'].to_s + '" > "$TEMP_KEY_FILE" && '
                     cmd += 'curl --cert "$TEMP_CERT_FILE" --key "$TEMP_KEY_FILE" '
@@ -344,6 +401,32 @@ puts "completed monitoring of ID: " + id.to_s + " (" + success.to_s + ")"
             if !@store.save
                 success = false
             end
+        else
+            if HAS_JSONB
+                @store.item = @store.item.merge("not-completed": completed)
+            else
+                @store.item = JSON.parse(@store.item).merge("not-completed": completed).transform_keys(&:to_s).to_json
+            end
+            rec_meta = @store.meta
+            if rec_meta.nil?
+                if HAS_JSONB
+                    @store.meta = {"processed": true, "error": true}
+                else
+                    @store.meta = {"processed": true, "error": true}.to_json
+                end
+            else
+                if rec_meta.is_a?(String)
+                    rec_meta = JSON.parse(rec_meta)
+                end
+                if HAS_JSONB
+                    @store.meta = rec_meta.merge({"processed": true, "error": true})
+                else
+                    @store.meta = rec_meta.merge({"processed": true, "error": true}).transform_keys(&:to_s).to_json
+                end
+            end
+            if !@store.save
+                success = false
+            end
         end
 puts "completed Event-ID: " + id.to_s + " (" + success.to_s + ")"
         return success
@@ -377,71 +460,103 @@ puts "completed Event-ID: " + id.to_s + " (" + success.to_s + ")"
                 if value.is_a? Hash
                     notify_object[key] = traverse_json(value, {}, rec)
                 elsif value.is_a? Array
-                    notify_object[key] = [traverse_json(value, {}, rec)]
+                    notify_object[key] = traverse_json(value, {}, rec)
                 else
                     notify_object[key] = handlebars.compile(value.to_s).call(
                         rec["record"].merge({"meta"=>rec["meta"],"sensor"=>rec["sensor"]})) rescue value
                 end
             end
         elsif obj.is_a? Array
+            notify_object = []
             obj.each_with_index do |value, index|
-                notify_object = traverse_json(value, {}, rec)
+                notify_object << traverse_json(value, {}, rec)
             end
         end
         return notify_object
     end
 
     def add_location(notify_object, rec)
-        identifier = rec["record"]["n"].sub(rec["monitor"]["base_name"],"")
-        latitudes = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
-                                key: 'n', 
-                                value_pattern: identifier.sub(/:*$/, '') + '%latitude')
-                         .order(:id).last(10).pluck(:item)
-        longitudes = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
-                                key: 'n', 
-                                value_pattern: identifier.sub(/:*$/, '') + '%longitude')
-                         .order(:id).last(10).pluck(:item)
-        accuracies = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
-                                key: 'n', 
-                                value_pattern: identifier.sub(/:*$/, '') + '%accuracy')
-                         .order(:id).last(10).pluck(:item)
-        sorted_lat = latitudes.sort_by { |item| item["t"] }
-        sorted_lon = longitudes.sort_by { |item| item["t"] }
-        sorted_acc = accuracies.sort_by { |item| item["t"] }
-
-        merged = sorted_lat.zip(sorted_lon).map do |la, lo|
-            if la && lo && la["t"] == lo["t"]
-                {
-                    "longitude" => lo["v"],
-                    "latitude" => la["v"],
-                    "t" => la["t"]
-                }
-            end
-        end
-        combined = merged.map do |loc|
-            acc = sorted_acc.find { |obj| obj["t"] == loc["t"]}
-            if acc.nil?
-                {
-                    "longitude" => loc["longitude"],
-                    "latitude" => loc["latitude"],
-                    "altitude" => nil,
-                    "radius" => nil,
-                    "timestamp" => Time.at(loc["t"].to_f.to_i).iso8601,
-                    "method" => "GPS"
-                }
+        # check inclusion of GPS locations
+        location_object = []
+        omit_gps_locations = false
+        notify_object["locations"].each do |loc|
+            if loc.transform_keys(&:to_s).has_key?("GPS-locations")
+                omit_gps_locations = (loc.transform_keys(&:to_s)["GPS-locations"].to_s.downcase == "false")
             else
-                {
-                    "longitude" => loc["longitude"],
-                    "latitude" => loc["latitude"],
-                    "altitude" => nil,
-                    "radius" => acc["v"],
-                    "timestamp" => Time.at(loc["t"].to_f.to_i).iso8601,
-                    "method" => "GPS"
-                }
+                location_object << loc
             end
-        end
+        end unless notify_object["locations"].nil? || notify_object["locations"].count == 0
+        notify_object["locations"] = location_object
+        if !omit_gps_locations
+            identifier = rec["record"]["n"].sub(rec["monitor"]["base_name"],"")
+            latitudes = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
+                                    key: 'n', 
+                                    value_pattern: identifier.sub(/:*$/, '') + '%latitude')
+                             .order(:id).last(10).pluck(:item)
+            if latitudes.count < 1
+                latitudes = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
+                                        key: 'n', 
+                                        value_pattern: identifier.sub(/:*$/, '') + '%lat')
+                                 .order(:id).last(10).pluck(:item)
+            end
+            longitudes = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
+                                    key: 'n', 
+                                    value_pattern: identifier.sub(/:*$/, '') + '%longitude')
+                             .order(:id).last(10).pluck(:item)
+            if longitudes.count < 1
+                longitudes = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
+                                        key: 'n', 
+                                        value_pattern: identifier.sub(/:*$/, '') + '%lon')
+                                 .order(:id).last(10).pluck(:item)
+            end
+            accuracies = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
+                                    key: 'n', 
+                                    value_pattern: identifier.sub(/:*$/, '') + '%accuracy')
+                             .order(:id).last(10).pluck(:item)
+            if accuracies.count < 1
+                accuracies = Store.where("item ? :key AND item->>:key LIKE :value_pattern", 
+                                        key: 'n', 
+                                        value_pattern: identifier.sub(/:*$/, '') + '%acc')
+                                 .order(:id).last(10).pluck(:item)
+            end
+            sorted_lat = latitudes.sort_by { |item| item["t"] }
+            sorted_lon = longitudes.sort_by { |item| item["t"] }
+            sorted_acc = accuracies.sort_by { |item| item["t"] }
 
-        notify_object["locations"] += combined
+            merged = sorted_lat.zip(sorted_lon).map do |la, lo|
+                if la && lo && la["t"] == lo["t"]
+                    {
+                        "longitude" => lo["v"],
+                        "latitude" => la["v"],
+                        "t" => la["t"]
+                    }
+                end
+            end
+            combined = merged.map do |loc|
+                acc = sorted_acc.find { |obj| obj["t"] == loc["t"]}
+                if acc.nil?
+                    {
+                        "longitude" => loc["longitude"],
+                        "latitude" => loc["latitude"],
+                        "altitude" => nil,
+                        "radius" => nil,
+                        "timestamp" => Time.at(loc["t"].to_f.to_i).iso8601,
+                        "method" => "GPS"
+                    }
+                else
+                    {
+                        "longitude" => loc["longitude"],
+                        "latitude" => loc["latitude"],
+                        "altitude" => nil,
+                        "radius" => acc["v"],
+                        "timestamp" => Time.at(loc["t"].to_f.to_i).iso8601,
+                        "method" => "GPS"
+                    }
+                end
+            end
+
+            notify_object["locations"] += combined
+        end
         return notify_object
     end
 end

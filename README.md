@@ -2,6 +2,8 @@
 
 This repository provides a comprehensive solution for the monitoring of IoT devices. With this software, users can integrate sensors and monitor the status, performance, and any anomalies. The system continuously collects data from the connected devices and analyzes it to determine if they are functioning correctly or if potential problems might arise. Upon detecting unusual activities or when device parameters fall outside the established normal range, alarms are immediately triggered. These alerts can be relayed through various channels such as email, or alerting through the DEC112 ESInet. The repository includes both the code for data collection and analysis, as well as a user-friendly interface for configuring monitoring settings and alarm conditions. The aim of this project is to provide a robust and scalable solution to ensure the efficiency and security of IoT networks.
 
+<img align="center" src="https://raw.githubusercontent.com/dec112/dc-iot/main/app/assets/images/system.png" height="400">
+
 Content:
 * [Further Resources](#further-resources)
 * [Developer Information](#developer-information)
@@ -142,19 +144,19 @@ SOyA structure for `IoT_Monitoring`: https://soya.ownyourdata.eu/IoT_Monitoring/
 
     </details>
 2) Record is stored    
-    https://dec4iot.data-container.net/api/data?id=49468
+    https://dec4iot.data-container.net/api/data?id=57377
 3) Data (SenML encoded) is split up into components:    
     (meta data references `source-id`)    
-    * Sensor Identifier (`v:5`): https://dec4iot.data-container.net/api/data?id=49469
-    * Battery: https://dec4iot.data-container.net/api/data?id=49470
-    * Heading: https://dec4iot.data-container.net/api/data?id=49472
-    * Temperature: https://dec4iot.data-container.net/api/data?id=49473
-    * Pressure: https://dec4iot.data-container.net/api/data?id=49474
-    * Altitude: https://dec4iot.data-container.net/api/data?id=49475
-    * Steps: https://dec4iot.data-container.net/api/data?id=49476
-    * Button pressed: https://dec4iot.data-container.net/api/data?id=49477
+    * Sensor Identifier (`v:5`): https://dec4iot.data-container.net/api/data?id=57378
+    * Battery: https://dec4iot.data-container.net/api/data?id=57379
+    * Heading: https://dec4iot.data-container.net/api/data?id=57381
+    * Temperature: https://dec4iot.data-container.net/api/data?id=57382
+    * Pressure: https://dec4iot.data-container.net/api/data?id=57383
+    * Altitude: https://dec4iot.data-container.net/api/data?id=57384
+    * Steps: https://dec4iot.data-container.net/api/data?id=57385
+    * Button pressed: https://dec4iot.data-container.net/api/data?id=57386
 4) Monitoring generates an event record for falling below the battery threshold value and sends email    
-    https://dec4iot.data-container.net/api/data?id=49471
+    https://dec4iot.data-container.net/api/data?id=57380
 
 #### Sequence for NG112 Alert
 **Assumptions:**    
@@ -217,12 +219,12 @@ SOyA structure for `IoT_Monitoring`: https://soya.ownyourdata.eu/IoT_Monitoring/
     </details>
 
 2) Record is stored    
-    https://dec4iot.data-container.net/api/data?id=49468
+    https://dec4iot.data-container.net/api/data?id=57377
 3) Data (SenML encoded) is split up into components:    
     (meta data references `source-id`)    
-    * Button pressed: https://dec4iot.data-container.net/api/data?id=49477
+    * Button pressed: https://dec4iot.data-container.net/api/data?id=57386
 4) Monitoring generates an event record    
-    https://dec4iot.data-container.net/api/data?id=49478
+    https://dec4iot.data-container.net/api/data?id=57387
 5) Validate on DEC112 webclient:
     URL: https://psap.test.dec112.eu/
     Server: `wss://psap.test.dec112.eu:8091/api/v1`
